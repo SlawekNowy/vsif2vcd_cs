@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "vsif2vcd": {
+      "commandName": "Project",
+      "commandLineArgs": "E:\\hl2_misc_dir"
+    }
+  }
+}
