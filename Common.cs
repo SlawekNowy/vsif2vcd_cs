@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace vsif2vcd
 {
@@ -19,10 +20,22 @@ namespace vsif2vcd
 
         internal static List<Scene> Scenes = new List<Scene>();
 
-        internal static List<string> ResponseFiles = new List<string>() {"scripts/talker/response_rules.txt" }; //A non empty Response Rules file List containing an entrypoint.
 
-        //this string indicates the moddir we're working on
-        internal static string Modname;
+        internal static List<string> ResponseFiles = new List<string>();
+
+        internal static void GetResponseFiles(string gameDirectory)
+        {
+            ResponseFiles.AddRange(Directory.GetFiles(gameDirectory + "/scripts/talker"));
+            try
+            {
+                ResponseFiles.AddRange(Directory.GetFiles(gameDirectory + "/scripts/talker_player"));
+            } catch (DirectoryNotFoundException)
+            {
+                //too bad
+            }
+
+        }
+
 
         internal static uint FourCC(char A, char B, char C, char D)
         {

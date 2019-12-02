@@ -83,6 +83,7 @@ namespace vsif2vcd
                     MapPath += ".bsp"; // this won't run when we got FileNotFoundException
                     byte[] tmp = new byte[4];
                     MapFile.Read(tmp, 0, 4);
+                    Array.Reverse(tmp);//file magic is big endian
                     //MapFile.Seek(4, SeekOrigin.Current); //equivalent of fread
                     ID = BitConverter.ToUInt32(tmp);
                     if (ID != Common.FourCC('V', 'B', 'S', 'P'))
@@ -93,7 +94,7 @@ namespace vsif2vcd
                     MapFile.Read(tmp, 0, 4);
                    // MapFile.Seek(4, SeekOrigin.Current); //equivalent of fread
                     ID = BitConverter.ToUInt32(tmp);
-                    if ((ID>18)&&(ID<29)) //no support for Titanfall
+                    if ((ID<19)&&(ID>28)) //no support for Titanfall
                     {
                         Console.WriteLine("Map {0} has incorrect version", MapToLoad);
                         return;
@@ -140,8 +141,8 @@ namespace vsif2vcd
             char[] lump_char = Encoding.ASCII.GetChars(lump);
             String lump_string = new string(lump_char);
             String[] lump_ready = lump_string.Split('\n');
-            // Dictionary<string, string> entity = new Dictionary<string, string>();
-            List<KeyValuePair<string, string>> entity = new List<KeyValuePair<string, string>>();
+            Dictionary<string, string> entity = new Dictionary<string, string>();
+            //List<KeyValuePair<string, string>> entity = new List<KeyValuePair<string, string>>();
             Regex r = new Regex("\"(.*?)\"");
 
             //parsing start
@@ -154,7 +155,7 @@ namespace vsif2vcd
                 }
                 else if (Line == "}")
                 {
-                    /* if(entity["classname"]== "logic_choreographed_scene")
+                     if(entity["classname"]== "logic_choreographed_scene")
                      {
                          Common.Scene scene = new Common.Scene
                          {
@@ -162,11 +163,10 @@ namespace vsif2vcd
                          };
                          Common.Scenes.Add(scene);
                      }
-                     if (entity["classname"] == "env_speaker")
-                     {
-                         Common.ResponseFiles.Add(entity["rulescript"]);
-                     } */
-                    Console.WriteLine("test");
+                    // if (entity["classname"] == "env_speaker")
+                    // {
+                     //    Common.ResponseFiles.Add(entity["rulescript"]);
+                    // }
                 }
                 else
                 { //entity key and value
@@ -175,7 +175,13 @@ namespace vsif2vcd
                     key = m.Groups[1].Value;
                     m=m.NextMatch();
                     value = m.Groups[1].Value;
-                    entity.Add(KeyValuePair.Create(key,value));
+                    string existing_key="";
+                    if (entity.TryGetValue(key,out existing_key))
+                    {
+                        value = existing_key+"\n"+value;
+                        entity.Remove(key);
+                    }
+                    entity.Add(key,value);
 
                 }
             }
