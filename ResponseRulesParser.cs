@@ -48,6 +48,10 @@ namespace vsif2vcd
             }
         }
 
+
+        // TODO: There's a mismatch between extracted scene data and extracted files
+        // It seems that npcs have hardcoded vcd strings in them
+        // some might even have printf formatting
         
     }
 }

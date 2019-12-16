@@ -86,7 +86,7 @@ namespace vsif2vcd
                     Array.Reverse(tmp);//file magic is big endian
                     //MapFile.Seek(4, SeekOrigin.Current); //equivalent of fread
                     ID = BitConverter.ToUInt32(tmp);
-                    if (ID != Common.FourCC('V', 'B', 'S', 'P'))
+                    if (ID != Common.FourCC("VBSP",true))
                     {
                         Console.WriteLine("Map {0} has incorrect file signature", MapToLoad);
                         return;
@@ -175,10 +175,9 @@ namespace vsif2vcd
                     key = m.Groups[1].Value;
                     m=m.NextMatch();
                     value = m.Groups[1].Value;
-                    string existing_key="";
-                    if (entity.TryGetValue(key,out existing_key))
+                    if (entity.TryGetValue(key, out string existing_key))
                     {
-                        value = existing_key+"\n"+value;
+                        value = existing_key + "\n" + value;
                         entity.Remove(key);
                     }
                     entity.Add(key,value);
