@@ -146,12 +146,19 @@ namespace vsif2vcd
            // throw new NotImplementedException();
 
             BVCDDecompiler.OpenVCDForWriting(out VCDFile, Entry.CRC);
+            SceneBuffer.Position = 0;
+            image.Position = 0;
             if (VCDFile != null)
             {
-                BVCDDecompiler.Decompile(ref VCDFile, ref SceneBuffer, ref image);
-                VCDFile.Close();
+                if (!BVCDDecompiler.Decompile(ref VCDFile, ref SceneBuffer, ref image))
+                {
+                    Console.WriteLine("Cannot decompile VCD with CRC {0:x}", Entry.CRC);
+                }
+                //VCDFile.Close();
             }
-            SceneBuffer.Close();
+            //SceneBuffer.Close();
+
+            //Close methods of BinaryReader and StringWriter close underlying streams by default
             
         }
 
